@@ -95,11 +95,40 @@ buildCardCafeHeader() {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  final _formKey = GlobalKey<FormState>();
+  TextEditingController userController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+
   @override
   Widget build(BuildContext context){
     return Scaffold(
       backgroundColor: const Color(0xffFFFFFF),
         body: buildBody(),
     );
+  }
+  onPressed() {
+    if (_formKey.currentState!.validate()) {
+      String userDigitado = userController.text;
+      String passwordDigitado = passwordController.text;
+
+      String user = "isf2@gmail.com";
+      String password = "c2n%h20";
+
+      if (user == userDigitado && password == passwordDigitado) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) {
+              return const HomePage();
+            },
+          ),
+        );
+      } else {
+        print('Usuário/Senha incorretos');
+      }
+    } else {
+      print("Erro na validação");
+    }
+
   }
 }
