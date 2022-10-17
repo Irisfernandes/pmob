@@ -92,6 +92,21 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
               ),
+              const SizedBox(height: 16),
+              ElevatedButton(onPressed: onPressedRegistro,
+                  style:
+                  ElevatedButton.styleFrom(backgroundColor:Colors.white),
+                  child: const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 12.0),
+                      child: Text(
+                        'Cadastrar usuário',
+                        style: TextStyle(
+                          fontSize: 20,
+                          color: Color(0xFFE81F7C),
+                        ),
+                      ) ,
+                  ),
+              )
             ],
           ),
         ),
@@ -99,32 +114,54 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  onPressed() {
+  onPressed() async {
     if (_formKey.currentState!.validate()) {
       String userDigitado = userController.text;
       String emailDigitado = emailController.text;
       String passwordDigitado = passwordController.text;
 
-      String user = "iris";
-      String email = "isf2@gmail.com";
-      String password = "12345678";
+      bool resultado = await UserDao().autenticar(user: userDigitado, email: emailDigitado, password: passwordDigitado);
 
-      if (user == userDigitado && password == passwordDigitado && email == emailDigitado) {
+
+      if (resultado) {
+        await SharedPrefHelper().login();
         Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) {
-              return HomePage();
-            },
-          ),
+            context,
+            MaterialPageRoute(
+              builder: (context) {
+                return const HomePage();
+              },
+            ),
         );
       } else {
-        print('Usuário/Senha incorretos');
+        showSnackBar('Usuário/Senha incorretos');
       }
     } else {
-      print("Erro na validação");
+      showSnackBar("Erro na validação");
     }
 
+  }
+
+  showSnackBar(String msg) {
+  final snackBar = SnackBar(
+      behavior: SnackBarBehavior.floating,
+      margin: const EdgeInsets.symmetric(
+        vertical: 80,
+        horizontal: 32,
+      ),
+      content: Text(msg),
+  );
+  ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
+
+  onPressedRegistro(){
+  Navigator.push(
+      context,
+  MaterialPageRoute(builder: (context){
+    return const RegistroUser();
+  }
+  )
+  );
   }
 
   buildCardCafeHeader() {
@@ -146,94 +183,3 @@ class _LoginPageState extends State<LoginPage> {
       padding: EdgeInsets.all(160),
     );
   }
-
-
-  /*onPressed() {
-    if (_formKey.currentState!.validate()) {
-      String userDigitado = userController.text;
-      String emailDigitado = emailController.text;
-      String passwordDigitado = passwordController.text;
-      String user = "iris";
-      String email = "isf2@gmail.com";
-      String password = "12345678";
-      if (user == userDigitado && password == passwordDigitado && email == emailDigitado) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) {
-              return HomePage();
-            },
-          ),
-        );
-      } else {
-        print('Usuário/Senha/email incorretos');
-      }
-    } else {
-      print("Erro na validação");
-    }
-  }
-  buildBody() {
-    return Container(
-      child: ListView(
-        children: [
-          buildCardCafeHeader(),
-          buildPadding(),
-        ],
-      ),
-    );
-  }
-  buildPadding(){
-    return Padding(
-      padding: EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget> [
-          TextFormField(
-            autofocus: true,
-            keyboardType: TextInputType.text,
-            style: new TextStyle(color: Colors.black, fontSize: 25 ),
-            decoration: InputDecoration(
-                labelText: 'Usuário:',
-                labelStyle: TextStyle(color: Colors.black, fontSize: 25)),
-          ),
-          const SizedBox(height: 25),
-          TextFormField(
-            autofocus: true,
-            keyboardType: TextInputType.text,
-            style: new TextStyle(color: Colors.black, fontSize: 25 ),
-            decoration: InputDecoration(
-                labelText: 'E-mail:',
-                labelStyle: TextStyle(color: Colors.black, fontSize: 25)),
-          ),
-          const SizedBox(height: 25),
-          TextFormField(
-            autofocus: true,
-            obscureText: true,
-            keyboardType: TextInputType.number,
-            style: new TextStyle(color: Colors.black, fontSize: 25),
-            decoration: InputDecoration(
-                labelText: 'Senha:',
-                labelStyle: TextStyle(color: Colors.black, fontSize: 25)),
-          ),
-          const SizedBox(height: 25),
-          ElevatedButton(
-            onPressed: onPressed,
-            style:
-            ElevatedButton.styleFrom(primary: const Color(0xFF3E2723)),
-            child: const Padding(
-              padding: EdgeInsets.symmetric(vertical: 12.0),
-              child: Text(
-                'Entrar',
-                style: TextStyle(
-                  fontSize: 20,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-  */
-}
